@@ -77,21 +77,18 @@ public class KeyboardManager {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
-        // Первый ряд
         List<InlineKeyboardButton> row1 = new ArrayList<>();
         row1.add(createInlineButton("Понедельник", "day_monday"));
         row1.add(createInlineButton("Вторник", "day_tuesday"));
         row1.add(createInlineButton("Среда", "day_wednesday"));
         rows.add(row1);
 
-        // Второй ряд
         List<InlineKeyboardButton> row2 = new ArrayList<>();
         row2.add(createInlineButton("Четверг", "day_thursday"));
         row2.add(createInlineButton("Пятница", "day_friday"));
         row2.add(createInlineButton("Суббота", "day_saturday"));
         rows.add(row2);
 
-        // Третий ряд
         List<InlineKeyboardButton> row3 = new ArrayList<>();
         row3.add(createInlineButton("Сегодня", "day_today"));
         row3.add(createInlineButton("Завтра", "day_tomorrow"));

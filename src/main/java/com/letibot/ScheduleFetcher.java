@@ -64,7 +64,7 @@ public class ScheduleFetcher {
         LocalDate startOfSemester = LocalDate.of(2025, 9, 2); // 2 сент 2025
         long weeksSinceStart = ChronoUnit.WEEKS.between(startOfSemester, LocalDate.now());
 
-        // Если weeksSinceStart четное - нечетная неделя, нечетное - четная
+        // Если четное - нечетная неделя, нечетное - четная
         boolean isOddWeek = weeksSinceStart % 2 == 0;
 
         return isOddWeek ? "нечётная" : "чётная";
@@ -78,7 +78,7 @@ public class ScheduleFetcher {
         try {
             JsonObject root = JsonParser.parseString(json).getAsJsonObject();
 
-            // Получаем данные группы
+            // данные группы
             if (!root.has(groupNumber)) {
                 throw new ScheduleException("Группа " + groupNumber + " не найдена в расписании.");
             }
@@ -90,7 +90,7 @@ public class ScheduleFetcher {
 
             JsonObject days = groupData.getAsJsonObject("days");
 
-            // Преобразуем день недели в числовой индекс
+            // день недели в числовой индекс
             int dayIndex = getDayIndex(day);
             if (dayIndex == -1) {
                 throw new ScheduleException("Неверный день недели. Используйте: monday, tuesday, wednesday, thursday, friday, saturday");
@@ -127,7 +127,6 @@ public class ScheduleFetcher {
                 }
             });
 
-            // Формируем красивый ответ
             StringBuilder result = new StringBuilder();
             String dayName = dayObject.has("name") ?
                     dayObject.get("name").getAsString() : getRussianDayName(dayIndex);
@@ -146,7 +145,7 @@ public class ScheduleFetcher {
                 String form = getSafeString(lesson, "form", "");
                 String weekType = getSafeString(lesson, "week", "");
 
-                // Определяем тип недели
+                //  тип недели
                 String weekInfo = "";
                 if (!weekType.isEmpty() && !weekType.equals("null")) {
                     weekInfo = getWeekTypeInfo(weekType);
@@ -312,7 +311,6 @@ public class ScheduleFetcher {
         }
     }
 
-    // Функция поиска ближайшего занятия
     public static String findNearestLesson(String json, String groupNumber) throws ScheduleException {
         try {
             LocalTime now = LocalTime.now();
@@ -419,7 +417,6 @@ public class ScheduleFetcher {
         }
     }
 
-    // Вспомогательные методы (остаются без изменений)
     private static String formatNearestLesson(JsonObject lesson, String day) {
         String startTime = getSafeString(lesson, "start_time", "??:??");
         String endTime = getSafeString(lesson, "end_time", "??:??");
@@ -513,7 +510,7 @@ public class ScheduleFetcher {
                         defaultValue : value.trim();
             }
         } catch (Exception e) {
-            // Игнорируем
+            //
         }
         return defaultValue;
     }

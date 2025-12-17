@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         String token = Config.getBotToken();
         if (token == null || token.contains("${") || token.equals("telegram.bot.token")) {
-            System.err.println("Токена не найден, ошибка");
+            System.err.println("Токен не найден, ошибка");
             System.exit(1);
         }
 

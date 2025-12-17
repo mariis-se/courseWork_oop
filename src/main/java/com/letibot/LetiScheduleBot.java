@@ -110,7 +110,7 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
             sendMessageWithReplyKeyboard(chatId, "Ошибка формата данных от сервера ЛЭТИ. Попробуйте позже.",
                     KeyboardManager.getMainKeyboard());
         } catch (DateTimeParseException e) {
-            sendMessageWithReplyKeyboard(chatId, "Ошибка обработки времени. Данные повреждены.",
+            sendMessageWithReplyKeyboard(chatId, "Ошибка обработки времени.",
                     KeyboardManager.getMainKeyboard());
         } catch (NoSuchElementException | NullPointerException e) {
             sendMessageWithReplyKeyboard(chatId, "Ошибка обработки данных. Некоторые данные отсутствуют.",
@@ -119,7 +119,7 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
             sendMessageWithReplyKeyboard(chatId, "Некорректный запрос: " + e.getMessage(),
                     KeyboardManager.getMainKeyboard());
         } catch (TelegramApiException e) {
-            throw e; // Перебрасываем выше для обработки в onUpdateReceived
+            throw e; //  для обработки в onUpdateReceived
         } catch (Exception e) {
             sendMessageWithReplyKeyboard(chatId,
                     "Непредвиденная ошибка: " + e.getClass().getSimpleName(),
@@ -145,8 +145,7 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
                 } else {
                     handleDay(chatId, userId, day);
                 }
-
-                // Удаляем inline-клавиатуру
+                // удаляем клав
                 EditMessageText editMessage = new EditMessageText();
                 editMessage.setChatId(String.valueOf(chatId));
                 editMessage.setMessageId(messageId);
@@ -161,7 +160,7 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
                     KeyboardManager.getDaysInlineKeyboard());
         } catch (Exception e) {
             sendMessageWithInlineKeyboard(chatId,
-                    "⚠Ошибка при обработке запроса: " + e.getMessage(),
+                    "Ошибка при обработке запроса: " + e.getMessage(),
                     KeyboardManager.getDaysInlineKeyboard());
         }
     }
@@ -174,7 +173,7 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
             groupInfo = "\n *Ваша группа:* " + userGroup;
         } else {
             groupInfo = "\n *Группа не установлена*\n" +
-                    "Нажмите '️ Настройки' для установки группы";
+                    "Нажмите Настройки для установки группы";
         }
 
         String welcomeText =
@@ -182,15 +181,15 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
                         " *Используйте кнопки ниже:*\n" +
                         groupInfo + "\n\n" +
                         " *Расписание:*\n" +
-                        "•  Сегодня\n" +
-                        "•  Завтра\n" +
-                        "•  Неделя\n" +
-                        "•  Ближайшее\n\n" +
+                        "-  Сегодня\n" +
+                        "-  Завтра\n" +
+                        "-  Неделя\n" +
+                        "-  Ближайшее\n\n" +
                         " *Дни недели:*\n" +
                         "Понедельник - Суббота\n\n" +
                         " *Настройки:*\n" +
-                        "•  Моя группа\n" +
-                        "•  Настройки";
+                        "-  Моя группа\n" +
+                        "-  Настройки";
 
         sendMessageWithReplyKeyboard(chatId, welcomeText, KeyboardManager.getMainKeyboard());
     }
