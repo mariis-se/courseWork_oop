@@ -1,10 +1,8 @@
 package com.letibot;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,22 +10,18 @@ public class KeyboardManager {
 
     public static ReplyKeyboardMarkup getMainKeyboard() {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        keyboardMarkup.setSelective(true);
         keyboardMarkup.setResizeKeyboard(true);
-        keyboardMarkup.setOneTimeKeyboard(false);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow row1 = new KeyboardRow();
         row1.add("Сегодня");
         row1.add("Завтра");
-        row1.add("Неделя");
         keyboard.add(row1);
 
         KeyboardRow row2 = new KeyboardRow();
         row2.add("Ближайшее");
-        row2.add("Моя группа");
-        row2.add("Настройки");
+        row2.add("Неделя");
         keyboard.add(row2);
 
         KeyboardRow row3 = new KeyboardRow();
@@ -41,6 +35,10 @@ public class KeyboardManager {
         row4.add("Пятница");
         row4.add("Суббота");
         keyboard.add(row4);
+
+        KeyboardRow row5 = new KeyboardRow();
+        row5.add("Настройка группы");
+        keyboard.add(row5);
 
         keyboardMarkup.setKeyboard(keyboard);
         return keyboardMarkup;
@@ -62,79 +60,15 @@ public class KeyboardManager {
         keyboard.add(row1);
 
         KeyboardRow row2 = new KeyboardRow();
-        row2.add("4355");
-        row2.add("4356");
-        row2.add("Другая...");
-        row2.add("Назад");
+        row2.add("Ввести свою группу");
+        row2.add("Назад в меню");
         keyboard.add(row2);
 
         keyboardMarkup.setKeyboard(keyboard);
         return keyboardMarkup;
     }
 
-    // выбор дня недели
-    public static InlineKeyboardMarkup getDaysInlineKeyboard() {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
-        List<InlineKeyboardButton> row1 = new ArrayList<>();
-        row1.add(createInlineButton("Понедельник", "day_monday"));
-        row1.add(createInlineButton("Вторник", "day_tuesday"));
-        row1.add(createInlineButton("Среда", "day_wednesday"));
-        rows.add(row1);
-
-        List<InlineKeyboardButton> row2 = new ArrayList<>();
-        row2.add(createInlineButton("Четверг", "day_thursday"));
-        row2.add(createInlineButton("Пятница", "day_friday"));
-        row2.add(createInlineButton("Суббота", "day_saturday"));
-        rows.add(row2);
-
-        List<InlineKeyboardButton> row3 = new ArrayList<>();
-        row3.add(createInlineButton("Сегодня", "day_today"));
-        row3.add(createInlineButton("Завтра", "day_tomorrow"));
-        rows.add(row3);
-
-        inlineKeyboardMarkup.setKeyboard(rows);
-        return inlineKeyboardMarkup;
-    }
-
-    public static InlineKeyboardMarkup getActionsInlineKeyboard() {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-        List<InlineKeyboardButton> row1 = new ArrayList<>();
-        row1.add(createInlineButton("Сегодня", "action_today"));
-        row1.add(createInlineButton("Завтра", "action_tomorrow"));
-        row1.add(createInlineButton("Неделя", "action_week"));
-        rows.add(row1);
-
-        List<InlineKeyboardButton> row2 = new ArrayList<>();
-        row2.add(createInlineButton("Ближайшее", "action_near"));
-        row2.add(createInlineButton("Моя группа", "action_mygroup"));
-        rows.add(row2);
-
-        List<InlineKeyboardButton> row3 = new ArrayList<>();
-        row3.add(createInlineButton("Сменить группу", "action_changegroup"));
-        row3.add(createInlineButton("Помощь", "action_help"));
-        rows.add(row3);
-
-        inlineKeyboardMarkup.setKeyboard(rows);
-        return inlineKeyboardMarkup;
-    }
-
-    // клавиатура для подтверждения
-    public static InlineKeyboardMarkup getConfirmationKeyboard(String action) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        row.add(createInlineButton("Да", action + "_yes"));
-        row.add(createInlineButton("Нет", action + "_no"));
-        rows.add(row);
-
-        inlineKeyboardMarkup.setKeyboard(rows);
-        return inlineKeyboardMarkup;
-    }
     //назад
     public static ReplyKeyboardMarkup getBackKeyboard() {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
@@ -151,11 +85,5 @@ public class KeyboardManager {
         return keyboardMarkup;
     }
 
-    // вспомогательный метод для создания кнопки
-    private static InlineKeyboardButton createInlineButton(String text, String callbackData) {
-        InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText(text);
-        button.setCallbackData(callbackData);
-        return button;
-    }
+
 }
