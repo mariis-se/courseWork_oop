@@ -12,6 +12,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import java.time.DateTimeException;
 import java.time.format.TextStyle;
 
 public class ScheduleFetcher {
@@ -217,16 +218,142 @@ public class ScheduleFetcher {
 
     public static String findNearestLesson(String json, String groupNumber) throws ScheduleException {
         try {
+            LocalTime now = LocalTime.now();
+            LocalDate today = LocalDate.now();
+            DayOfWeek currentDayOfWeek = today.getDayOfWeek();
+
             JsonObject root = JsonParser.parseString(json).getAsJsonObject();
 
             if (!root.has(groupNumber)) {
                 throw new ScheduleException("Группа не найдена");
             }
 
-            return "Ближайшее занятие будет найдено в будущих обновлениях";
+            JsonObject groupData = root.getAsJsonObject(groupNumber);
+            JsonObject days = groupData.getAsJsonObject("days");
+
+            // Ищем на сегодня
+            int todayIndex = currentDayOfWeek.getValue() - 1;
+            String todayKey = String.valueOf(todayIndex);
+
+            if (days.has(todayKey)) {
+                JsonObject todayObj = days.getAsJsonObject(todayKey);
+                if (todayObj.has("lessons") && !todayObj.get("lessons").isJsonNull()) {
+                    JsonArray lessons = todayObj.getAsJsonArray("lessons");
+
+                    JsonObject nearestLesson = null;
+                    LocalTime nearestTime = null;
+
+                    for (JsonElement lesson : lessons) {
+                        JsonObject lessonObj = lesson.getAsJsonObject();
+                        String startTimeStr = getSafeString(lessonObj, "start_time", "");
+                        if (!startTimeStr.isEmpty()) {
+                            try {
+                                LocalTime lessonTime = LocalTime.parse(startTimeStr);
+
+                                String weekType = getSafeString(lessonObj, "week", "");
+                                if (isLessonForCurrentWeek(weekType)) {
+                                    if (lessonTime.isAfter(now) || lessonTime.equals(now)) {
+                                        if (nearestTime == null || lessonTime.isBefore(nearestTime)) {
+                                            nearestTime = lessonTime;
+                                            nearestLesson = lessonObj;
+                                        }
+                                    }
+                                }
+                            } catch (DateTimeException e) {
+                                continue;
+                            }
+                        }
+                    }
+
+                    if (nearestLesson != null) {
+                        return formatNearestLesson(nearestLesson, "сегодня");
+                    }
+                }
+            }
+
+            // Если на сегодня не нашли, ищем на ближайшие дни
+            for (int i = 1; i <= 7; i++) {
+                int nextDayIndex = (todayIndex + i) % 7;
+                String nextDayKey = String.valueOf(nextDayIndex);
+
+                if (days.has(nextDayKey)) {
+                    JsonObject dayObj = days.getAsJsonObject(nextDayKey);
+                    if (dayObj.has("lessons") && !dayObj.get("lessons").isJsonNull()) {
+                        JsonArray lessons = dayObj.getAsJsonArray("lessons");
+
+                        if (lessons.size() > 0) {
+                            JsonObject firstLesson = lessons.get(0).getAsJsonObject();
+
+                            String dayName = "";
+                            switch (i) {
+                                case 1: dayName = "завтра"; break;
+                                case 2: dayName = "послезавтра"; break;
+                                default:
+                                    LocalDate targetDate = today.plusDays(i);
+                                    dayName = targetDate.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru"));
+                                    dayName = dayName.substring(0, 1).toUpperCase() + dayName.substring(1);
+                            }
+
+                            return formatNearestLesson(firstLesson, dayName);
+                        }
+                    }
+                }
+            }
+
+            return "Ближайших занятий не найдено";
+
         } catch (JsonSyntaxException e) {
             throw new ScheduleException("Ошибка формата данных");
         }
+    }
+
+    private static String formatNearestLesson(JsonObject lesson, String day) {
+        String startTime = getSafeString(lesson, "start_time", "??:??");
+        String endTime = getSafeString(lesson, "end_time", "??:??");
+        String subject = getSafeString(lesson, "name", "Предмет не указан");
+        String type = getSafeString(lesson, "subjectType", "");
+        String teacher = getSafeString(lesson, "teacher", "");
+        String room = getSafeString(lesson, "room", "");
+        String form = getSafeString(lesson, "form", "");
+        String weekType = getSafeString(lesson, "week", "");
+
+        StringBuilder result = new StringBuilder();
+        result.append("*Ближайшее занятие*\n\n");
+        result.append("*").append(day).append("*\n");
+        result.append("*").append(startTime).append(" - ").append(endTime).append("*\n");
+        result.append(" ").append(subject);
+
+        if (!type.isEmpty()) {
+            result.append(" (").append(type).append(")");
+        }
+        result.append("\n");
+
+        if (!teacher.isEmpty() && !teacher.equals("null")) {
+            result.append(" ").append(teacher).append("\n");
+        }
+
+        if ("online".equalsIgnoreCase(form) || "distant".equalsIgnoreCase(form)) {
+            result.append(" Онлайн");
+        } else if (!room.isEmpty() && !room.equals("null")) {
+            result.append(" Ауд. ").append(room);
+        }
+
+        if (!weekType.isEmpty() && !weekType.equals("null")) {
+            result.append("\n ").append(getWeekTypeInfo(weekType));
+        }
+
+        return result.toString();
+    }
+
+    private static boolean isLessonForCurrentWeek(String weekType) {
+        if (weekType.isEmpty() || weekType.equals("null") || weekType.equals("3")) {
+            return true;
+        }
+
+        String currentParity = getCurrentWeekParity();
+        boolean isCurrentOdd = currentParity.equals("нечётная");
+
+        return (isCurrentOdd && weekType.equals("1")) || (!isCurrentOdd && weekType.equals("2"));
     }
 
     private static String getWeekTypeInfo(String weekType) {
