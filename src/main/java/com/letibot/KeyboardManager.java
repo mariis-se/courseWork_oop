@@ -18,21 +18,18 @@ public class KeyboardManager {
 
         List<KeyboardRow> keyboard = new ArrayList<>();
 
-        // Первый ряд
         KeyboardRow row1 = new KeyboardRow();
-        row1.add("📅 Сегодня");
-        row1.add("📆 Завтра");
-        row1.add("🗓️ Неделя");
+        row1.add("Сегодня");
+        row1.add("Завтра");
+        row1.add("Неделя");
         keyboard.add(row1);
 
-        // Второй ряд
         KeyboardRow row2 = new KeyboardRow();
-        row2.add("🔔 Ближайшее");
-        row2.add("📋 Моя группа");
-        row2.add("⚙️ Настройки");
+        row2.add("Ближайшее");
+        row2.add("Моя группа");
+        row2.add("Настройки");
         keyboard.add(row2);
 
-        // Третий ряд дни недели
         KeyboardRow row3 = new KeyboardRow();
         row3.add("Понедельник");
         row3.add("Вторник");
@@ -49,7 +46,6 @@ public class KeyboardManager {
         return keyboardMarkup;
     }
 
-    // Клавиатура для настройки группы
     public static ReplyKeyboardMarkup getGroupSetupKeyboard() {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         keyboardMarkup.setSelective(true);
@@ -69,14 +65,14 @@ public class KeyboardManager {
         row2.add("4355");
         row2.add("4356");
         row2.add("Другая...");
-        row2.add("↩️ Назад");
+        row2.add("Назад");
         keyboard.add(row2);
 
         keyboardMarkup.setKeyboard(keyboard);
         return keyboardMarkup;
     }
 
-    // Inline-клавиатура для выбора дня недели
+    // выбор дня недели
     public static InlineKeyboardMarkup getDaysInlineKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
@@ -105,7 +101,6 @@ public class KeyboardManager {
         return inlineKeyboardMarkup;
     }
 
-    // Inline-клавиатура для действий
     public static InlineKeyboardMarkup getActionsInlineKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
@@ -130,7 +125,7 @@ public class KeyboardManager {
         return inlineKeyboardMarkup;
     }
 
-    // Inline-клавиатура для подтверждения
+    // клавиатура для подтверждения
     public static InlineKeyboardMarkup getConfirmationKeyboard(String action) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
@@ -143,8 +138,7 @@ public class KeyboardManager {
         inlineKeyboardMarkup.setKeyboard(rows);
         return inlineKeyboardMarkup;
     }
-
-    // Клавиатура "Назад"
+    //назад
     public static ReplyKeyboardMarkup getBackKeyboard() {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         keyboardMarkup.setSelective(true);
@@ -160,7 +154,7 @@ public class KeyboardManager {
         return keyboardMarkup;
     }
 
-    // Вспомогательный метод для создания inline-кнопки
+    // вспомогательный метод для создания кнопки
     private static InlineKeyboardButton createInlineButton(String text, String callbackData) {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);

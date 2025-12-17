@@ -41,7 +41,7 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
         } catch (IllegalArgumentException e) {
             System.err.println("Некорректный аргумент: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Непредвиденная ошибка в обработке: " + e.getMessage());
+            System.err.println("Ошибка в обработке: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -54,21 +54,19 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
         System.out.println("Получено (" + userId + "): " + messageText);
 
         try {
-            if (messageText.equals("/start") || messageText.equals("/help") ||
-                    messageText.equals("помощь") || messageText.equals("начать") ||
-                    messageText.equals("меню") || messageText.equals("Назад в меню")) {
+            if (messageText.equals("/start") || messageText.equals("/help") || messageText.equals("меню") || messageText.equals("Назад в меню")) {
                 sendWelcomeMessage(chatId, userId);
-            } else if (messageText.equals("Сегодня") || messageText.equals("сегодня")) {
+            } else if (messageText.equals("Сегодня")) {
                 handleToday(chatId, userId);
-            } else if (messageText.equals("Завтра") || messageText.equals("завтра")) {
+            } else if (messageText.equals("Завтра")) {
                 handleTomorrow(chatId, userId);
-            } else if (messageText.equals("еделя") || messageText.equals("неделя")) {
+            } else if (messageText.equals("Неделя")) {
                 handleWeek(chatId, userId);
-            } else if (messageText.equals("Ближайшее") || messageText.equals("ближайшее")) {
+            } else if (messageText.equals("Ближайшее")) {
                 handleNear(chatId, userId);
-            } else if (messageText.equals("Моя группа") || messageText.equals("моя группа")) {
+            } else if (messageText.equals("Моя группа")) {
                 handleMyGroup(chatId, userId);
-            } else if (messageText.equals("Настройки") || messageText.equals("настройки")) {
+            } else if (messageText.equals("Настройки")) {
                 handleSettings(chatId, userId);
             } else if (messageText.equals("Понедельник")) {
                 handleDay(chatId, userId, "monday");
@@ -87,7 +85,7 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
             } else if (messageText.equals("Назад")) {
                 sendWelcomeMessage(chatId, userId);
             } else if (messageText.matches("\\d{4}")) {
-                // Проверяем, является ли сообщение номером группы
+                //  является ли сообщение номером группы
                 handleSetGroup(chatId, userId, messageText);
             } else {
                 sendMessageWithReplyKeyboard(chatId,
