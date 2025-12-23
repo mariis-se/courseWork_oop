@@ -225,7 +225,7 @@ public class ScheduleFetcher {
             JsonObject root = JsonParser.parseString(json).getAsJsonObject();
 
             if (!root.has(groupNumber)) {
-                throw new ScheduleException("Группа не найдена");
+                throw new ScheduleException("Группа не найдена. Попробуйте изменить номер группы.");
             }
 
             JsonObject groupData = root.getAsJsonObject(groupNumber);

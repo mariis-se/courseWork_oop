@@ -63,11 +63,24 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
                 handleDay(chatId, userId, "saturday");
             } else if (messageText.equals("Ввести свою группу")) {
                 requestGroupInput(chatId);
-            } else if (messageText.matches("\\d{4}")) {
+            } else if (messageText.matches("\\d{2,5}")) {
+            //  любое число от 2 до 5 цифр
+            if (messageText.matches("\\d{4}")) {
                 handleSetGroup(chatId, userId, messageText);
             } else {
-                sendMessageWithKeyboard(chatId, "Используйте кнопки меню", KeyboardManager.getMainKeyboard());
+                sendMessageWithKeyboard(chatId,
+                        "Некорректный номер группы.\nНомер группы должен состоять из 4 цифр.\n\n" +
+                                "Пожалуйста, введите правильный номер группы:",
+                        KeyboardManager.getBackKeyboard());
             }
+        } else {
+            sendMessageWithKeyboard(chatId, "Используйте кнопки меню", KeyboardManager.getMainKeyboard());
+        }
+//            } else if (messageText.matches("\\d{4}")) {
+//                handleSetGroup(chatId, userId, messageText);
+//            } else {
+//                sendMessageWithKeyboard(chatId, "Используйте кнопки меню", KeyboardManager.getMainKeyboard());
+//            }
         } catch (ScheduleException e) {
             sendMessageWithKeyboard(chatId, "Ошибка: " + e.getMessage(), KeyboardManager.getMainKeyboard());
         } catch (IOException e) {
@@ -79,13 +92,30 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
 
 
 
-    private void sendWelcomeMessage(long chatId, long userId) throws TelegramApiException {
-        String userGroup = Config.getUserGroup(userId);
-        String groupInfo = userGroup != null ? "\n*Группа:* " + userGroup : "\n*Группа не установлена*";
+//    private void sendWelcomeMessage(long chatId, long userId) throws TelegramApiException {
+//        String userGroup = Config.getUserGroup(userId);
+//        String groupInfo = userGroup != null ? "\n*Группа:* " + userGroup : "\n*Группа не установлена*";
+//
+//        String welcomeText = "*Бот расписания ЛЭТИ*\n\n" + groupInfo;
+//        sendMessageWithKeyboard(chatId, welcomeText, KeyboardManager.getMainKeyboard());
+//    }
+private void sendWelcomeMessage(long chatId, long userId) throws TelegramApiException {
+    String userGroup = Config.getUserGroup(userId);
 
-        String welcomeText = "*Бот расписания ЛЭТИ*\n\n" + groupInfo;
+    if (userGroup != null) {
+        String welcomeText = "*Бот расписания ЛЭТИ*\n\n" +
+                "*Ваша группа:* " + userGroup + "\n\n" +
+                "Используйте кнопки ниже для получения расписания";
+        sendMessageWithKeyboard(chatId, welcomeText, KeyboardManager.getMainKeyboard());
+    } else {
+        String welcomeText = "*Бот расписания ЛЭТИ*\n\n" +
+                "Добро пожаловать! Этот бот поможет вам получить расписание занятий:)\n\n" +
+                "*Введите номер своей группы* (4 цифры, например: 4354)\n\n" +
+                "Или выберите группу из списка в меню 'Настройка группы'";
         sendMessageWithKeyboard(chatId, welcomeText, KeyboardManager.getMainKeyboard());
     }
+}
+
 
     private void handleToday(long chatId, long userId) throws ScheduleException, IOException, TelegramApiException {
         String userGroup = Config.getUserGroup(userId);
@@ -164,14 +194,18 @@ public class LetiScheduleBot extends TelegramLongPollingBot {
             sendMessageWithKeyboard(chatId, "Группа установлена: *" + groupNumber + "*",
                     KeyboardManager.getMainKeyboard());
         } else {
-            sendMessageWithKeyboard(chatId, "Используйте формат: 4354",
-                    KeyboardManager.getGroupSetupKeyboard());
+            sendMessageWithKeyboard(chatId,
+                    "Некорректный номер группы.\nНомер группы должен состоять из 4 цифр.\n\n" +
+                            "Пожалуйста, введите номер группы еще раз:",
+                    KeyboardManager.getBackKeyboard());
         }
     }
 
     private void requestGroupInput(long chatId) throws TelegramApiException {
-        sendMessageWithKeyboard(chatId, "Введите номер группы (4 цифры):",
-                KeyboardManager.getBackKeyboard());
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText("Введите номер группы (4 цифры):");
+        execute(message);
     }
 
     private void sendMessageWithKeyboard(long chatId, String text, ReplyKeyboardMarkup keyboard) throws TelegramApiException {
